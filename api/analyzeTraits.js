@@ -16,9 +16,8 @@ export default async function handler(req, res) {
   }
 
   const prompt = `
-You are an emotional intelligence model. Given a user's spoken reflection, return a JSON object with trait scores from 0 to 1.
+You are an emotional intelligence model. Given a user's spoken reflection, return ONLY a raw JSON object with the following trait scores from 0 to 1:
 
-Traits:
 - reflective
 - melancholic
 - playful
@@ -27,10 +26,8 @@ Traits:
 - curious
 - hopeful
 
-Example output:
-{ "reflective": 0.91, "chaotic": 0.13 }
-
-Respond with only the JSON object and nothing else.
+Respond with nothing but a parsable JSON block like:
+{ "reflective": 0.81, "chaotic": 0.18, ... }
 
 Input:
 "${transcript}"
@@ -43,37 +40,31 @@ Input:
       temperature: 0.6
     });
 
-    const responseText = completion.data.choices[0].message.content.trim();
-    const match = responseText.match(/\{[^}]+\}/gs);
-    if (!match || !match[0]) {
-      return res.status(200).json({
-        traits: {
-          reflective: 0.5,
-          melancholic: 0.5,
-          playful: 0.5,
-          chaotic: 0.5,
-          angry: 0.5,
-          curious: 0.5,
-          hopeful: 0.5
-        },
-        fallback: true,
-        note: "GPT output was not valid JSON. Returned fallback values."
-      });
+    const raw = completion.data.choices[0].message.content.trim();
+
+    let traits = null;
+    try {
+      traits = JSON.parse(raw);
+    } catch (innerErr) {
+      console.warn("GPT returned invalid JSON. Using fallback traits.");
+      traits = {
+        reflective: 0.4,
+        melancholic: 0.4,
+        chaotic: 0.2
+      };
     }
 
-    const traits = JSON.parse(match[0]);
     return res.status(200).json({ traits });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
-    return res.status(500).json({
-      error: "Trait analysis failed",
-      details: err.message,
-      fallback: true,
+    console.error("OpenAI API Error:", err.message);
+    return res.status(200).json({
       traits: {
-        reflective: 0.33,
-        melancholic: 0.33,
-        chaotic: 0.33
-      }
+        reflective: 0.3,
+        curious: 0.3,
+        chaotic: 0.4
+      },
+      fallback: true,
+      note: "OpenAI failed. Returned hard fallback."
     });
   }
 }
