@@ -36,12 +36,7 @@ const RitualGate = () => {
       setEmail("");
 
       setTimeout(() => {
-        // optional: redirect based on source
-        if (refSource === "airdrop") {
-          navigate("/ghost?ref=airdrop");
-        } else {
-          navigate("/rituals");
-        }
+        navigate("/thankyou");
       }, 2000);
     } catch (err) {
       console.error("Unexpected error:", err);
