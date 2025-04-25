@@ -18,35 +18,31 @@ const RitualGate = () => {
 
     const timestamp = new Date().toISOString();
 
-    const payload = {
-      records: [
-        {
-          fields: {
-            email: email,
-            source: refSource,
-            timestamp: timestamp
-          }
-        }
-      ]
-    };
-
     try {
-      const response = await fetch("https://api.airtable.com/v0/app2NkPC5K0JngQtj/Leads", {
+      const response = await fetch("/api/airdrop", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer patHJ9e40Krzpml28.b244f9a9eb29f4e3e6df6c3ee79ba5891f1ea71c06befc1b0fa5e81e72079ad6",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          email,
+          source: refSource,
+          timestamp
+        })
       });
 
-      if (!response.ok) throw new Error("Failed to submit to Airtable");
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("Airtable API Error:", error);
+        alert("Something went wrong. Try again in a moment.");
+        return;
+      }
 
       alert("🌀 You’ve entered the waiting.");
       setEmail("");
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Try again in a moment.");
+      console.error("Unexpected error:", err);
+      alert("Something went wrong. Try again.");
     }
   };
 
