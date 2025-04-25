@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   const prompt = `
-You are an emotional intelligence model. Given a user's spoken reflection, return ONLY a raw JSON object with the following trait scores from 0 to 1:
+You are an emotional intelligence model. Given a user's spoken reflection, return ONLY a JSON object with the following trait scores from 0 to 1:
 
 - reflective
 - melancholic
@@ -26,9 +26,10 @@ You are an emotional intelligence model. Given a user's spoken reflection, retur
 - curious
 - hopeful
 
-Respond with nothing but a parsable JSON block like:
-{ "reflective": 0.81, "chaotic": 0.18, ... }
+Example format:
+{ "reflective": 0.81, "chaotic": 0.18 }
 
+Return only the JSON. No explanation or formatting.
 Input:
 "${transcript}"
 `;
@@ -41,30 +42,30 @@ Input:
     });
 
     const raw = completion.data.choices[0].message.content.trim();
-
     let traits = null;
+
     try {
       traits = JSON.parse(raw);
-    } catch (innerErr) {
-      console.warn("GPT returned invalid JSON. Using fallback traits.");
+    } catch {
+      console.warn("GPT JSON parse failed. Using fallback traits.");
       traits = {
-        reflective: 0.4,
-        melancholic: 0.4,
-        chaotic: 0.2
+        reflective: 0.3,
+        melancholic: 0.3,
+        curious: 0.4
       };
     }
 
     return res.status(200).json({ traits });
   } catch (err) {
-    console.error("OpenAI API Error:", err.message);
+    console.error("OpenAI API error:", err.message);
     return res.status(200).json({
-      traits: {
-        reflective: 0.3,
-        curious: 0.3,
-        chaotic: 0.4
-      },
+      error: "trait analysis failed",
       fallback: true,
-      note: "OpenAI failed. Returned hard fallback."
+      traits: {
+        reflective: 0.4,
+        chaotic: 0.3,
+        hopeful: 0.3
+      }
     });
   }
 }
