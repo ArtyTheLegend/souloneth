@@ -51,7 +51,7 @@ const GhostRecord = () => {
     const formData = new FormData();
     formData.append("file", blob);
 
-    const res = await fetch("/api/uploadRitual", {
+    const res = await fetch("https://souloneth-ritual-server-production.up.railway.app/uploadRitual", {
       method: "POST",
       body: formData
     });
