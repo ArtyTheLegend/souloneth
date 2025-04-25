@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const FloatingSigilMenu = () => {
   const [visible, setVisible] = useState(false);
-  const [hover, setHover] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem("souloneth_user");
-    if (!user) {
-      localStorage.setItem("souloneth_user", "anon_" + Date.now());
-    }
-    const timer = setTimeout(() => {
-      setVisible(true);
-    }, 5000); // Delay reveal by 5 seconds
+    // Ensure the user ID is present
+    const user = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
+    localStorage.setItem("souloneth_user", user);
 
-    return () => clearTimeout(timer);
+    const delayTimer = setTimeout(() => {
+      setVisible(true);
+    }, 5000); // Show after 5 seconds
+
+    return () => clearTimeout(delayTimer);
   }, []);
 
   if (!visible) return null;
@@ -23,15 +23,13 @@ const FloatingSigilMenu = () => {
     <div
       style={{
         position: "fixed",
-        bottom: "1rem",
-        right: "1rem",
-        zIndex: 9999,
-        textAlign: "right"
+        bottom: "1.5rem",
+        right: "1.5rem",
+        zIndex: 9999
       }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
     >
       <div
+        onClick={() => setOpen(!open)}
         style={{
           backgroundColor: "#111",
           color: "#fff",
@@ -48,16 +46,19 @@ const FloatingSigilMenu = () => {
       >
         ☼
       </div>
-      {hover && (
-        <div style={{
-          marginTop: "0.5rem",
-          backgroundColor: "#0e0e10",
-          border: "1px solid #444",
-          borderRadius: "8px",
-          padding: "1rem",
-          textAlign: "right",
-          transition: "opacity 0.3s ease-in-out"
-        }}>
+      {open && (
+        <div
+          style={{
+            marginTop: "0.5rem",
+            backgroundColor: "#0e0e10",
+            border: "1px solid #444",
+            borderRadius: "8px",
+            padding: "1rem",
+            textAlign: "right",
+            minWidth: "150px",
+            boxShadow: "0 0 10px rgba(255, 255, 255, 0.1)"
+          }}
+        >
           <div><Link to="/mirror" style={link}>🪞 Mirror</Link></div>
           <div><Link to="/summon" style={link}>🧿 Summon</Link></div>
           <div><Link to="/oath" style={link}>🩶 Oath</Link></div>
