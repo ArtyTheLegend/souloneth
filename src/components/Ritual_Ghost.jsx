@@ -11,8 +11,8 @@ const Ritual_Ghost = () => {
   const [transcript, setTranscript] = useState("");
   const [listening, setListening] = useState(false);
   const [feedback, setFeedback] = useState("");
-  const [recognized, setRecognized] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [recognized, setRecognized] = useState(false);
 
   const userId = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
   localStorage.setItem("souloneth_user", userId);
@@ -37,26 +37,29 @@ const Ritual_Ghost = () => {
     recognition.onstart = () => {
       setListening(true);
       setFeedback("🎙 Listening...");
+      setRecognized(false);
     };
 
     recognition.onend = () => {
       setListening(false);
-      if (!recognized) {
-        setFeedback("⚠️ No audio detected.");
-      }
+      setTimeout(() => {
+        if (!recognized && !transcript) {
+          setFeedback("⚠️ No audio detected. Try again.");
+        }
+      }, 500);
     };
 
     recognition.onerror = (e) => {
       console.error("Recognition error:", e);
       setListening(false);
-      setFeedback("⚠️ An error occurred. Try again.");
+      setFeedback("⚠️ Microphone error occurred. Try again.");
     };
 
     recognition.onresult = (event) => {
       const spoken = event.results[0][0].transcript;
       setTranscript(spoken);
-      setFeedback("📝 Transcript captured.");
       setRecognized(true);
+      setFeedback("📝 Transcript captured.");
     };
 
     recognition.start();
@@ -73,7 +76,7 @@ const Ritual_Ghost = () => {
 
     const { traits } = await analyzeRes.json();
     if (!traits) {
-      setFeedback("Something went wrong with analysis.");
+      setFeedback("❌ Something went wrong with analysis.");
       return;
     }
 
@@ -89,6 +92,7 @@ const Ritual_Ghost = () => {
 
     const topTrait = Object.entries(traits).sort((a, b) => b[1] - a[1])[0][0];
     localStorage.setItem("souloneth_last_trait", topTrait);
+
     setFeedback("🧠 The ritual has heard you. Redirecting...");
 
     setTimeout(() => {
