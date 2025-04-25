@@ -6,15 +6,21 @@ const FloatingSigilMenu = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    // Ensure the user ID is present
-    const user = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
-    localStorage.setItem("souloneth_user", user);
+    try {
+      let user = localStorage.getItem("souloneth_user");
+      if (!user) {
+        user = "anon_" + Date.now();
+        localStorage.setItem("souloneth_user", user);
+      }
 
-    const delayTimer = setTimeout(() => {
-      setVisible(true);
-    }, 5000); // Show after 5 seconds
+      const delayTimer = setTimeout(() => {
+        setVisible(true);
+      }, 5000);
 
-    return () => clearTimeout(delayTimer);
+      return () => clearTimeout(delayTimer);
+    } catch (err) {
+      console.error("Floating Sigil Menu init failed:", err);
+    }
   }, []);
 
   if (!visible) return null;
