@@ -7,11 +7,14 @@ const prompts = [
   "What would you confess if you could disappear after?"
 ];
 
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
 const Ritual_Ghost = () => {
   const [transcript, setTranscript] = useState("");
   const [listening, setListening] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [prompt, setPrompt] = useState("");
+  const [unsupported, setUnsupported] = useState(false);
   const recognizedRef = useRef(false);
 
   const userId = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
@@ -19,13 +22,15 @@ const Ritual_Ghost = () => {
 
   useEffect(() => {
     setPrompt(prompts[Math.floor(Math.random() * prompts.length)]);
+
+    const hasSpeech = "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
+    if (isIOS || !hasSpeech) {
+      setUnsupported(true);
+    }
   }, []);
 
   const beginListening = () => {
-    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-      alert("Voice recognition not supported in this browser.");
-      return;
-    }
+    if (unsupported) return;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
@@ -114,7 +119,13 @@ const Ritual_Ghost = () => {
     }}>
       <h1>👻 Speak to the Ritual</h1>
       <p style={{ fontSize: "1.1rem", marginBottom: "2rem", maxWidth: "600px" }}>{prompt}</p>
-      {!transcript ? (
+
+      {unsupported ? (
+        <p style={{ color: "#faa", maxWidth: "500px" }}>
+          📵 Your device does not support ritual speech.  
+          Please try again from a desktop browser (Chrome preferred).
+        </p>
+      ) : !transcript ? (
         <button onClick={beginListening} style={{
           padding: "0.75rem 1.5rem",
           fontSize: "1rem",
