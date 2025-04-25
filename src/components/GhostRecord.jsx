@@ -48,19 +48,24 @@ const GhostRecord = () => {
     const formData = new FormData();
     formData.append("file", blob);
 
-    const res = await fetch("https://souloneth-ritual-server-production.up.railway.app/uploadRitual", {
-      method: "POST",
-      body: formData
-    });
+    try {
+      const res = await fetch("https://souloneth-ritual-server-production.up.railway.app/uploadRitual", {
+        method: "POST",
+        body: formData
+      });
 
-    const result = await res.json();
-    if (result.success) {
-      setFeedback("🧠 The ritual has heard you. Redirecting...");
-      setTimeout(() => {
-        window.location.href = "/blessing";
-      }, 2500);
-    } else {
-      setFeedback("❌ Upload failed. Try again.");
+      const result = await res.json();
+      if (result.success) {
+        setFeedback("🧠 The ritual has heard you. Redirecting...");
+        setTimeout(() => {
+          window.location.href = "/blessing";
+        }, 2500);
+      } else {
+        setFeedback("❌ Upload failed. Try again.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      setFeedback("❌ Failed to reach ritual server.");
     }
   };
 
