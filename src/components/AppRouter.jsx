@@ -14,6 +14,8 @@ import Oath from "./Oath";
 import Hall from "./Hall";
 import Blessing from "./Blessing";
 import Summon from "./Summon";
+import Vault from "./Vault";
+import Claim from "./Claim";
 
 const AppRouter = () => (
   <Router>
@@ -30,6 +32,8 @@ const AppRouter = () => (
       <Route path="/hall" element={<Hall />} />
       <Route path="/blessing" element={<Blessing />} />
       <Route path="/summon" element={<Summon />} />
+      <Route path="/vault" element={<Vault />} />
+      <Route path="/claim" element={<Claim />} />
     </Routes>
   </Router>
 );
