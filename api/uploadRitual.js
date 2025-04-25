@@ -7,6 +7,7 @@ export const config = {
 import { IncomingForm } from "formidable";
 import fs from "fs";
 import fetch from "node-fetch";
+import FormData from "form-data";
 
 const parseForm = (req) =>
   new Promise((resolve, reject) => {
@@ -33,10 +34,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing uploaded audio file" });
     }
 
-    const fileStream = fs.createReadStream(audio.filepath);
+    const renamedPath = audio.filepath.replace(".webm", ".wav");
+    fs.renameSync(audio.filepath, renamedPath); // Pretend it's a .wav file
+
+    const fileStream = fs.createReadStream(renamedPath);
 
     const formData = new FormData();
-    formData.append("file", fileStream);
+    formData.append("file", fileStream, {
+      filename: "ritual.wav", // Pretend name for OpenAI
+      contentType: "audio/wav"
+    });
     formData.append("model", "whisper-1");
 
     const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
@@ -54,7 +61,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Transcription failed", result });
     }
 
-    // Route transcript into GPT trait scoring pipeline
     const analysisRes = await fetch("https://souloneth.vercel.app/api/analyzeTraits", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
