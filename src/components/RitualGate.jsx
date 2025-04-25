@@ -8,40 +8,31 @@ const RitualGate = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const alreadySubmitted = localStorage.getItem("souloneth_email_submitted");
+    if (alreadySubmitted) {
+      navigate("/thankyou");
+    }
+
     const params = new URLSearchParams(location.search);
     const ref = params.get("ref") || localStorage.getItem("souloneth_ref") || "organic";
     localStorage.setItem("souloneth_ref", ref);
     setRefSource(ref);
-  }, [location]);
+  }, [location, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const timestamp = new Date().toISOString();
 
-    try {
-      const response = await fetch("/api/airdrop", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: refSource, timestamp })
-      });
+    await fetch("/api/airdrop", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, source: refSource, timestamp })
+    });
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Airtable API Error:", error);
-        alert("Something went wrong. Try again in a moment.");
-        return;
-      }
-
-      alert("🌀 You’ve entered the waiting.");
-      setEmail("");
-
-      setTimeout(() => {
-        navigate("/thankyou");
-      }, 2000);
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      alert("Something went wrong. Try again.");
-    }
+    localStorage.setItem("souloneth_email_submitted", true);
+    setEmail("");
+    alert("🌀 You’ve entered the waiting.");
+    setTimeout(() => navigate("/thankyou"), 1000);
   };
 
   return (
