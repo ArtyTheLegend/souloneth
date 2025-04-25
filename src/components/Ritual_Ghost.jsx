@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const prompts = [
   "What’s something you’ve been holding onto too long?",
@@ -12,7 +12,7 @@ const Ritual_Ghost = () => {
   const [listening, setListening] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [recognized, setRecognized] = useState(false);
+  const recognizedRef = useRef(false);
 
   const userId = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
   localStorage.setItem("souloneth_user", userId);
@@ -36,17 +36,17 @@ const Ritual_Ghost = () => {
 
     recognition.onstart = () => {
       setListening(true);
+      recognizedRef.current = false;
       setFeedback("🎙 Listening...");
-      setRecognized(false);
     };
 
     recognition.onend = () => {
       setListening(false);
       setTimeout(() => {
-        if (!recognized && !transcript) {
+        if (!recognizedRef.current && !transcript) {
           setFeedback("⚠️ No audio detected. Try again.");
         }
-      }, 500);
+      }, 300);
     };
 
     recognition.onerror = (e) => {
@@ -58,7 +58,7 @@ const Ritual_Ghost = () => {
     recognition.onresult = (event) => {
       const spoken = event.results[0][0].transcript;
       setTranscript(spoken);
-      setRecognized(true);
+      recognizedRef.current = true;
       setFeedback("📝 Transcript captured.");
     };
 
@@ -94,7 +94,6 @@ const Ritual_Ghost = () => {
     localStorage.setItem("souloneth_last_trait", topTrait);
 
     setFeedback("🧠 The ritual has heard you. Redirecting...");
-
     setTimeout(() => {
       window.location.href = "/blessing";
     }, 2500);
