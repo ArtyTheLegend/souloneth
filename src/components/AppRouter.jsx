@@ -6,6 +6,7 @@ import RitualsPortal from "./RitualsPortal";
 import AirdropPage from "./AirdropPage";
 import Info_Whitepaper from "./Info_Whitepaper";
 import Ritual_GhostMeMeter from "./Ritual_GhostMeMeter";
+import GhostRecord from "./GhostRecord";
 import Ritual_SaveOrSink from "./Ritual_SaveOrSink";
 import Ritual_Ghost from "./Ritual_Ghost";
 import ThankYou from "./ThankYou";
@@ -25,6 +26,7 @@ const AppRouter = () => (
       <Route path="/airdrop" element={<AirdropPage />} />
       <Route path="/whitepaper" element={<Info_Whitepaper />} />
       <Route path="/ghost" element={<Ritual_Ghost />} />
+      <Route path="/ghost/record" element={<GhostRecord />} />
       <Route path="/saveorsink" element={<Ritual_SaveOrSink />} />
       <Route path="/thankyou" element={<ThankYou />} />
       <Route path="/mirror" element={<Mirror />} />
