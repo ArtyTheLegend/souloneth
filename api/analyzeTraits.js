@@ -1,10 +1,8 @@
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -48,13 +46,13 @@ Now, analyze the following transcript:
 "${transcript}"
 `;
 
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.5,
     });
 
-    const rawText = completion.data.choices[0].message.content.trim();
+    const rawText = completion.choices[0].message.content.trim();
 
     const traits = JSON.parse(rawText);
 
