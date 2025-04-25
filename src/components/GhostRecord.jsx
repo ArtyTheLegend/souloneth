@@ -43,6 +43,11 @@ const GhostRecord = () => {
   const uploadRecording = async () => {
     if (!blob) return;
 
+    if (blob.size < 1000) {
+      setFeedback("⚠️ Recording too short. Please record longer.");
+      return;
+    }
+
     setFeedback("🔎 Uploading for ritual analysis...");
 
     const formData = new FormData();
@@ -61,7 +66,7 @@ const GhostRecord = () => {
           window.location.href = "/blessing";
         }, 2500);
       } else {
-        setFeedback("❌ Upload failed. Try again.");
+        setFeedback(result.error || "❌ Upload failed. Try again.");
       }
     } catch (err) {
       console.error("Upload error:", err);
