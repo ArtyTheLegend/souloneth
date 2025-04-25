@@ -7,8 +7,9 @@ import AirdropPage from "./AirdropPage";
 import Info_Whitepaper from "./Info_Whitepaper";
 import Ritual_GhostMeMeter from "./Ritual_GhostMeMeter";
 import Ritual_SaveOrSink from "./Ritual_SaveOrSink";
-import Ritual_Ghost from "./Ritual_Ghost"; // NEW
-import ThankYou from "./ThankYou"; // NEW (or use ThankYou_Animated if swapped)
+import Ritual_Ghost from "./Ritual_Ghost";
+import ThankYou from "./ThankYou";
+import Mirror from "./Mirror"; // 🪞 NEW
 
 const AppRouter = () => (
   <Router>
@@ -17,9 +18,10 @@ const AppRouter = () => (
       <Route path="/rituals" element={<RitualsPortal />} />
       <Route path="/airdrop" element={<AirdropPage />} />
       <Route path="/whitepaper" element={<Info_Whitepaper />} />
-      <Route path="/ghost" element={<Ritual_Ghost />} /> {/* NEW */}
+      <Route path="/ghost" element={<Ritual_Ghost />} />
       <Route path="/saveorsink" element={<Ritual_SaveOrSink />} />
-      <Route path="/thankyou" element={<ThankYou />} /> {/* Redirect post-submit */}
+      <Route path="/thankyou" element={<ThankYou />} />
+      <Route path="/mirror" element={<Mirror />} /> {/* 🪞 Soulprint viewer */}
     </Routes>
   </Router>
 );
