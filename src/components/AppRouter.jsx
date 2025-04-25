@@ -13,6 +13,7 @@ import Mirror from "./Mirror";
 import Oath from "./Oath";
 import Hall from "./Hall";
 import Blessing from "./Blessing";
+import Summon from "./Summon";
 
 const AppRouter = () => (
   <Router>
@@ -28,6 +29,7 @@ const AppRouter = () => (
       <Route path="/oath" element={<Oath />} />
       <Route path="/hall" element={<Hall />} />
       <Route path="/blessing" element={<Blessing />} />
+      <Route path="/summon" element={<Summon />} />
     </Routes>
   </Router>
 );
