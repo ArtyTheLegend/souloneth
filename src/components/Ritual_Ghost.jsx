@@ -18,7 +18,6 @@ const Ritual_Ghost = () => {
   localStorage.setItem("souloneth_user", userId);
 
   useEffect(() => {
-    // iOS or unsupported → redirect to /ghost/record
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     const hasSpeech = "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
     if (isIOS || !hasSpeech) {
