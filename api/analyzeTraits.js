@@ -1,72 +1,66 @@
+import { Configuration, OpenAIApi } from "openai";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { transcript } = req.body;
+
   if (!transcript) {
-    return res.status(400).json({ error: "Missing transcript" });
+    return res.status(400).json({ error: "No transcript provided" });
   }
 
-  const prompt = `
-You are an emotional intelligence model. Given a user's spoken reflection, return ONLY a JSON object with the following trait scores from 0 to 1:
+  try {
+    const prompt = `
+You are an emotional resonance analyzer for a sacred ritual system. Based only on the user's words, estimate the emotional distribution.
 
+The traits you must estimate are:
 - reflective
-- melancholic
-- playful
 - chaotic
-- angry
-- curious
 - hopeful
+- melancholic
+- intense
+- playful
 
-Example format:
-{ "reflective": 0.81, "chaotic": 0.18 }
+Rules:
+- Assign each trait a value between 0.0 and 1.0
+- Make sure the sum of all traits equals 1.0
+- Return ONLY a JSON object without explanation or extra words.
 
-Return only the JSON. No explanation or formatting.
-Input:
+Example JSON:
+{
+  "reflective": 0.3,
+  "chaotic": 0.2,
+  "hopeful": 0.3,
+  "melancholic": 0.1,
+  "intense": 0.05,
+  "playful": 0.05
+}
+
+Now, analyze the following transcript:
 "${transcript}"
 `;
 
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.6
-      })
+    const completion = await openai.createChatCompletion({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.5,
     });
 
-    const data = await response.json();
-    const raw = data.choices?.[0]?.message?.content?.trim() || "";
+    const rawText = completion.data.choices[0].message.content.trim();
 
-    let traits;
-    try {
-      traits = JSON.parse(raw);
-    } catch (err) {
-      console.warn("GPT parse failed. Returning fallback traits.");
-      traits = {
-        reflective: 0.4,
-        melancholic: 0.3,
-        hopeful: 0.3
-      };
-    }
+    const traits = JSON.parse(rawText);
 
-    return res.status(200).json({ traits });
+    return res.status(200).json({ success: true, traits });
   } catch (err) {
-    console.error("analyzeTraits fallback error:", err.message);
-    return res.status(200).json({
-      traits: {
-        reflective: 0.3,
-        curious: 0.3,
-        chaotic: 0.4
-      },
-      fallback: true,
-      note: "Fallback traits used due to OpenAI API failure."
-    });
+    console.error("🔥 analyzeTraits error:", err.message);
+    return res.status(500).json({ error: "Unexpected failure", details: err.message });
   }
 }
