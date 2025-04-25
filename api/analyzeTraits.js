@@ -1,11 +1,3 @@
-export const config = {
-  runtime: "nodejs"
-};
-
-import OpenAI from "openai";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -27,24 +19,32 @@ You are an emotional intelligence model. Given a user's spoken reflection, retur
 - curious
 - hopeful
 
-Example format:
+Format:
 { "reflective": 0.81, "chaotic": 0.18 }
 
-Return only the JSON. No explanation or formatting.
+Do not return any explanation or formatting. Return only JSON.
 Input:
 "${transcript}"
 `;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.6
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.6
+      })
     });
 
-    const raw = completion.choices[0].message.content.trim();
-    let traits;
+    const data = await response.json();
+    const raw = data.choices?.[0]?.message?.content?.trim();
 
+    let traits;
     try {
       traits = JSON.parse(raw);
     } catch {
@@ -57,7 +57,7 @@ Input:
 
     return res.status(200).json({ traits });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("OpenAI fetch error:", err.message);
     return res.status(200).json({
       traits: {
         reflective: 0.4,
@@ -65,7 +65,7 @@ Input:
         curious: 0.3
       },
       fallback: true,
-      note: "OpenAI failed. Returning fallback traits."
+      note: "OpenAI fetch failed. Returning fallback traits."
     });
   }
 }
