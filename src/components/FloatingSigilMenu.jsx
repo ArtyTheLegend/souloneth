@@ -6,8 +6,12 @@ const FloatingSigilMenu = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem("souloneth_user");
-    if (user) setVisible(true);
+    let user = localStorage.getItem("souloneth_user");
+    if (!user) {
+      user = "anon_" + Date.now();
+      localStorage.setItem("souloneth_user", user);
+    }
+    setVisible(true);
   }, []);
 
   if (!visible) return null;
