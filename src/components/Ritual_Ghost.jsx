@@ -1,14 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+
+const prompts = [
+  "What’s something you’ve been holding onto too long?",
+  "What’s the most honest thing you never said?",
+  "If someone could hear one thing from you, what would it be?",
+  "What would you confess if you could disappear after?"
+];
 
 const Ritual_Ghost = () => {
   const [transcript, setTranscript] = useState("");
   const [listening, setListening] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [recognized, setRecognized] = useState(false);
+  const [prompt, setPrompt] = useState("");
 
   const userId = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
   localStorage.setItem("souloneth_user", userId);
 
   useEffect(() => {
+    setPrompt(prompts[Math.floor(Math.random() * prompts.length)]);
+  }, []);
+
+  const beginListening = () => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
       alert("Voice recognition not supported in this browser.");
       return;
@@ -21,58 +34,67 @@ const Ritual_Ghost = () => {
     recognition.interimResults = false;
     recognition.lang = "en-US";
 
-    recognition.onstart = () => setListening(true);
-    recognition.onend = () => setListening(false);
+    recognition.onstart = () => {
+      setListening(true);
+      setFeedback("🎙 Listening...");
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+      if (!recognized) {
+        setFeedback("⚠️ No audio detected.");
+      }
+    };
+
     recognition.onerror = (e) => {
       console.error("Recognition error:", e);
       setListening(false);
+      setFeedback("⚠️ An error occurred. Try again.");
     };
 
-    recognition.onresult = async (event) => {
+    recognition.onresult = (event) => {
       const spoken = event.results[0][0].transcript;
       setTranscript(spoken);
-      setFeedback("🔎 Analyzing...");
-
-      // Send to /api/analyzeTraits
-      const analyzeRes = await fetch("/api/analyzeTraits", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: spoken })
-      });
-
-      const { traits } = await analyzeRes.json();
-
-      if (!traits) {
-        setFeedback("Something went wrong with analysis.");
-        return;
-      }
-
-      // Track each trait
-      const timestamp = new Date().toISOString();
-      for (const trait in traits) {
-        const value = traits[trait];
-        await fetch("/api/trackTrait", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, trait, value, ritual: "ghost", timestamp })
-        });
-      }
-
-      // Store top trait
-      const topTrait = Object.entries(traits).sort((a, b) => b[1] - a[1])[0][0];
-      localStorage.setItem("souloneth_last_trait", topTrait);
-
-      setFeedback("🧠 The ritual has heard you.");
-      setTimeout(() => {
-        window.location.href = "/blessing";
-      }, 2000);
+      setFeedback("📝 Transcript captured.");
+      setRecognized(true);
     };
 
-    // Auto-start listening
     recognition.start();
+  };
 
-    return () => recognition.stop();
-  }, []);
+  const submitReflection = async () => {
+    setFeedback("🔎 Analyzing...");
+
+    const analyzeRes = await fetch("/api/analyzeTraits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ transcript })
+    });
+
+    const { traits } = await analyzeRes.json();
+    if (!traits) {
+      setFeedback("Something went wrong with analysis.");
+      return;
+    }
+
+    const timestamp = new Date().toISOString();
+    for (const trait in traits) {
+      const value = traits[trait];
+      await fetch("/api/trackTrait", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, trait, value, ritual: "ghost", timestamp })
+      });
+    }
+
+    const topTrait = Object.entries(traits).sort((a, b) => b[1] - a[1])[0][0];
+    localStorage.setItem("souloneth_last_trait", topTrait);
+    setFeedback("🧠 The ritual has heard you. Redirecting...");
+
+    setTimeout(() => {
+      window.location.href = "/blessing";
+    }, 2500);
+  };
 
   return (
     <div style={{
@@ -87,20 +109,45 @@ const Ritual_Ghost = () => {
       textAlign: "center",
       padding: "2rem"
     }}>
-      <h1>👻 Speak Now</h1>
-      <p>Let the ritual hear your truth. Say whatever must be said.</p>
-      {listening ? <p>🎙 Listening...</p> : <p>Stopped listening.</p>}
-      {transcript && (
-        <div style={{
-          backgroundColor: "#111",
-          marginTop: "2rem",
-          padding: "1rem",
-          borderRadius: "8px",
-          maxWidth: "500px"
+      <h1>👻 Speak to the Ritual</h1>
+      <p style={{ fontSize: "1.1rem", marginBottom: "2rem", maxWidth: "600px" }}>{prompt}</p>
+      {!transcript ? (
+        <button onClick={beginListening} style={{
+          padding: "0.75rem 1.5rem",
+          fontSize: "1rem",
+          border: "none",
+          backgroundColor: "#ffffff",
+          color: "#0e0e10",
+          borderRadius: "6px",
+          cursor: "pointer"
         }}>
-          <p><strong>You said:</strong></p>
-          <p style={{ fontStyle: "italic" }}>{transcript}</p>
-        </div>
+          🎙 Begin Speaking
+        </button>
+      ) : (
+        <>
+          <div style={{
+            backgroundColor: "#111",
+            marginTop: "2rem",
+            padding: "1rem",
+            borderRadius: "8px",
+            maxWidth: "500px"
+          }}>
+            <p><strong>You said:</strong></p>
+            <p style={{ fontStyle: "italic" }}>{transcript}</p>
+          </div>
+          <button onClick={submitReflection} style={{
+            marginTop: "2rem",
+            padding: "0.75rem 1.5rem",
+            fontSize: "1rem",
+            border: "none",
+            backgroundColor: "#ffffff",
+            color: "#0e0e10",
+            borderRadius: "6px",
+            cursor: "pointer"
+          }}>
+            Submit to Ritual
+          </button>
+        </>
       )}
       {feedback && <p style={{ marginTop: "2rem", color: "#aaa" }}>{feedback}</p>}
     </div>
