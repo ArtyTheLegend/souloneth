@@ -9,7 +9,10 @@ import Ritual_GhostMeMeter from "./Ritual_GhostMeMeter";
 import Ritual_SaveOrSink from "./Ritual_SaveOrSink";
 import Ritual_Ghost from "./Ritual_Ghost";
 import ThankYou from "./ThankYou";
-import Mirror from "./Mirror"; // 🪞 NEW
+import Mirror from "./Mirror";
+import Oath from "./Oath";
+import Hall from "./Hall";
+import Blessing from "./Blessing";
 
 const AppRouter = () => (
   <Router>
@@ -21,7 +24,10 @@ const AppRouter = () => (
       <Route path="/ghost" element={<Ritual_Ghost />} />
       <Route path="/saveorsink" element={<Ritual_SaveOrSink />} />
       <Route path="/thankyou" element={<ThankYou />} />
-      <Route path="/mirror" element={<Mirror />} /> {/* 🪞 Soulprint viewer */}
+      <Route path="/mirror" element={<Mirror />} />
+      <Route path="/oath" element={<Oath />} />
+      <Route path="/hall" element={<Hall />} />
+      <Route path="/blessing" element={<Blessing />} />
     </Routes>
   </Router>
 );
