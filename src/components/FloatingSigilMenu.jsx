@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 const FloatingSigilMenu = () => {
   const [visible, setVisible] = useState(false);
@@ -19,7 +18,7 @@ const FloatingSigilMenu = () => {
 
       return () => clearTimeout(delayTimer);
     } catch (err) {
-      console.error("Floating Sigil Menu init failed:", err);
+      console.error("FloatingSigilMenu error:", err);
     }
   }, []);
 
@@ -65,11 +64,11 @@ const FloatingSigilMenu = () => {
             boxShadow: "0 0 10px rgba(255, 255, 255, 0.1)"
           }}
         >
-          <div><Link to="/mirror" style={link}>🪞 Mirror</Link></div>
-          <div><Link to="/summon" style={link}>🧿 Summon</Link></div>
-          <div><Link to="/oath" style={link}>🩶 Oath</Link></div>
-          <div><Link to="/hall" style={link}>🏛️ Hall</Link></div>
-          <div><Link to="/vault" style={link}>🔐 Vault</Link></div>
+          <div><a href="/mirror" style={link}>🪞 Mirror</a></div>
+          <div><a href="/summon" style={link}>🧿 Summon</a></div>
+          <div><a href="/oath" style={link}>🩶 Oath</a></div>
+          <div><a href="/hall" style={link}>🏛️ Hall</a></div>
+          <div><a href="/vault" style={link}>🔐 Vault</a></div>
         </div>
       )}
     </div>
