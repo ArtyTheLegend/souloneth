@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   const prompt = `
-You are an emotional intelligence model. Given a user's spoken reflection, return only a JSON object with trait scores from 0 to 1.
+You are an emotional intelligence model. Given a user's spoken reflection, return a JSON object with trait scores from 0 to 1.
 
 Traits:
 - reflective
@@ -30,6 +30,8 @@ Traits:
 Example output:
 { "reflective": 0.91, "chaotic": 0.13 }
 
+Respond with only the JSON object and nothing else.
+
 Input:
 "${transcript}"
 `;
@@ -42,16 +44,36 @@ Input:
     });
 
     const responseText = completion.data.choices[0].message.content.trim();
-    const jsonMatch = responseText.match(/\{[^\}]+\}/gs);
-    const traits = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
-
-    if (!traits) {
-      return res.status(500).json({ error: "GPT-4 returned invalid format", raw: responseText });
+    const match = responseText.match(/\{[^}]+\}/gs);
+    if (!match || !match[0]) {
+      return res.status(200).json({
+        traits: {
+          reflective: 0.5,
+          melancholic: 0.5,
+          playful: 0.5,
+          chaotic: 0.5,
+          angry: 0.5,
+          curious: 0.5,
+          hopeful: 0.5
+        },
+        fallback: true,
+        note: "GPT output was not valid JSON. Returned fallback values."
+      });
     }
 
+    const traits = JSON.parse(match[0]);
     return res.status(200).json({ traits });
   } catch (err) {
-    console.error("OpenAI API Error:", err.message);
-    return res.status(500).json({ error: "Trait analysis failed", details: err.message });
+    console.error("OpenAI error:", err.message);
+    return res.status(500).json({
+      error: "Trait analysis failed",
+      details: err.message,
+      fallback: true,
+      traits: {
+        reflective: 0.33,
+        melancholic: 0.33,
+        chaotic: 0.33
+      }
+    });
   }
 }
