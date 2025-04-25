@@ -19,10 +19,10 @@ You are an emotional intelligence model. Given a user's spoken reflection, retur
 - curious
 - hopeful
 
-Format:
+Example format:
 { "reflective": 0.81, "chaotic": 0.18 }
 
-Do not return any explanation or formatting. Return only JSON.
+Return only the JSON. No explanation or formatting.
 Input:
 "${transcript}"
 `;
@@ -42,12 +42,13 @@ Input:
     });
 
     const data = await response.json();
-    const raw = data.choices?.[0]?.message?.content?.trim();
+    const raw = data.choices?.[0]?.message?.content?.trim() || "";
 
     let traits;
     try {
       traits = JSON.parse(raw);
-    } catch {
+    } catch (err) {
+      console.warn("GPT parse failed. Returning fallback traits.");
       traits = {
         reflective: 0.4,
         melancholic: 0.3,
@@ -57,15 +58,15 @@ Input:
 
     return res.status(200).json({ traits });
   } catch (err) {
-    console.error("OpenAI fetch error:", err.message);
+    console.error("analyzeTraits fallback error:", err.message);
     return res.status(200).json({
       traits: {
-        reflective: 0.4,
-        chaotic: 0.3,
-        curious: 0.3
+        reflective: 0.3,
+        curious: 0.3,
+        chaotic: 0.4
       },
       fallback: true,
-      note: "OpenAI fetch failed. Returning fallback traits."
+      note: "Fallback traits used due to OpenAI API failure."
     });
   }
 }
