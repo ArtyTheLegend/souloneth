@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 const ThankYou = () => {
   const [counter, setCounter] = useState(4132);
   const [showNext, setShowNext] = useState(false);
+  const [refLink, setRefLink] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => setShowNext(true), 3000);
+    const id = localStorage.getItem("souloneth_user") || "anon";
+    setRefLink(`https://souloneth.com/?ref=${id}`);
     return () => clearTimeout(timer);
   }, []);
 
@@ -29,14 +32,15 @@ const ThankYou = () => {
       <p style={{ fontSize: "0.9rem", color: "#888" }}>
         {counter.toLocaleString()} souls have already entered.
       </p>
-      <div style={{ marginTop: "3rem", fontSize: "0.85rem", color: "#777" }}>
+      <div style={{ marginTop: "3rem", fontSize: "0.85rem", color: "#777", maxWidth: "90%", wordWrap: "break-word" }}>
         Share your ghost code: <br />
         <code style={{
           backgroundColor: "#111",
           padding: "0.3rem 0.6rem",
-          borderRadius: "4px"
+          borderRadius: "4px",
+          display: "inline-block"
         }}>
-          https://souloneth.com/?ref=you
+          {refLink}
         </code>
       </div>
       <div style={{ marginTop: "4rem", color: "#666", fontStyle: "italic" }}>
