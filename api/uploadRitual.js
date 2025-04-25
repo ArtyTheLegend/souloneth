@@ -34,15 +34,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing uploaded audio file" });
     }
 
-    const renamedPath = audio.filepath.replace(".webm", ".wav");
-    fs.renameSync(audio.filepath, renamedPath); // Pretend it's a .wav file
-
-    const fileStream = fs.createReadStream(renamedPath);
+    const fileStream = fs.createReadStream(audio.filepath);
 
     const formData = new FormData();
     formData.append("file", fileStream, {
-      filename: "ritual.wav", // Pretend name for OpenAI
-      contentType: "audio/wav"
+      filename: "ritual.webm", // Keep real filename
+      contentType: "audio/webm"
     });
     formData.append("model", "whisper-1");
 
@@ -71,7 +68,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, traits: final.traits });
   } catch (err) {
-    console.error("UploadRitual error:", err.message);
+    console.error("UploadRitual direct error:", err.message);
     return res.status(500).json({ error: "Unexpected failure", details: err.message });
   }
 }
