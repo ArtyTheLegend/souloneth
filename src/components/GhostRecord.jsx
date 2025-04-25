@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 
 const GhostRecord = () => {
   const [recording, setRecording] = useState(false);
-  const [audioURL, setAudioURL] = useState("");
   const mediaRecorderRef = useRef(null);
   const [blob, setBlob] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -21,8 +20,6 @@ const GhostRecord = () => {
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioURL(url);
         setBlob(audioBlob);
       };
 
@@ -93,13 +90,10 @@ const GhostRecord = () => {
         </button>
       )}
 
-      {audioURL && (
-        <>
-          <audio controls src={audioURL} style={{ marginTop: "2rem" }} />
-          <button onClick={uploadRecording} style={{ ...buttonStyle, marginTop: "1rem" }}>
-            📤 Upload for Ritual
-          </button>
-        </>
+      {blob && (
+        <button onClick={uploadRecording} style={{ ...buttonStyle, marginTop: "2rem" }}>
+          📤 Upload for Ritual
+        </button>
       )}
 
       {feedback && <p style={{ marginTop: "2rem", color: "#aaa" }}>{feedback}</p>}
