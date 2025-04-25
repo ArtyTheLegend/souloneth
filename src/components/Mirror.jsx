@@ -5,6 +5,15 @@ const Mirror = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
 
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("devmode");
+    if (mode === "true") {
+      alert("🛠️ Developer mode activated. Displaying full soulprint.");
+    }
+  }, []);
+
   useEffect(() => {
     const id = localStorage.getItem("souloneth_user") || "demo_user";
     setUserId(id);

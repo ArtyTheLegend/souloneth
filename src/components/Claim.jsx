@@ -6,6 +6,15 @@ const Claim = () => {
   const [valid, setValid] = useState(false);
   const location = useLocation();
 
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const unlock = params.get("code");
+    if (unlock === "ritual1") {
+      alert("🔐 Claim access unlocked by ritual1.");
+    }
+  }, []);
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const input = params.get("code") || "";
