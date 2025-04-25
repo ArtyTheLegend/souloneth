@@ -5,22 +5,20 @@ const Mirror = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
 
-  
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get("devmode");
-    if (mode === "true") {
-      alert("🛠️ Developer mode activated. Displaying full soulprint.");
-    }
-  }, []);
-
-  useEffect(() => {
-    const id = localStorage.getItem("souloneth_user") || "demo_user";
+    const id = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
     setUserId(id);
+
     fetch(`/api/getTraits?user_id=${id}`)
       .then(res => res.json())
       .then(data => {
-        if (data.traits) setTraits(data.traits);
+        if (data.traits && Array.isArray(data.traits)) {
+          setTraits(data.traits.map(t => t.fields));
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching traits:", err);
         setLoading(false);
       });
   }, []);
@@ -28,7 +26,6 @@ const Mirror = () => {
   return (
     <div style={{
       minHeight: "100vh",
-      width: "100%",
       backgroundColor: "#0e0e10",
       color: "#f5f5f5",
       display: "flex",
@@ -38,18 +35,28 @@ const Mirror = () => {
       padding: "2rem"
     }}>
       <h1>🪞 The Mirror</h1>
-      <p style={{ color: "#bbb", marginBottom: "2rem" }}>Reflections seen by the ritual for: <code>{userId}</code></p>
-      {loading ? <p>Loading soulprint...</p> : (
-        <ul style={{ listStyle: "none", padding: 0, maxWidth: "600px", width: "100%" }}>
-          {traits.map(({ fields }, idx) => (
-            <li key={idx} style={{ marginBottom: "1rem", borderBottom: "1px solid #333", paddingBottom: "0.75rem" }}>
-              <div><strong>Trait:</strong> {fields.trait}</div>
-              <div><strong>Value:</strong> {parseFloat(fields.value).toFixed(2)}</div>
-              <div><strong>Ritual:</strong> {fields.ritual}</div>
-              <div style={{ fontSize: "0.85rem", color: "#777" }}>{fields.timestamp}</div>
+      <p style={{ color: "#bbb", marginBottom: "2rem" }}>
+        Reflections seen by the ritual for: <code>{userId}</code>
+      </p>
+      {loading ? (
+        <p>Loading your soulprint...</p>
+      ) : traits.length > 0 ? (
+        <ul style={{ listStyle: "none", padding: 0, maxWidth: "600px" }}>
+          {traits.map((trait, index) => (
+            <li key={index} style={{
+              marginBottom: "1.5rem",
+              borderBottom: "1px solid #333",
+              paddingBottom: "1rem"
+            }}>
+              <div><strong>Trait:</strong> {trait.trait}</div>
+              <div><strong>Value:</strong> {parseFloat(trait.value || 0).toFixed(2)}</div>
+              <div><strong>Ritual:</strong> {trait.ritual}</div>
+              <div style={{ fontSize: "0.8rem", color: "#777" }}>{trait.timestamp}</div>
             </li>
           ))}
         </ul>
+      ) : (
+        <p>No reflections recorded yet. Speak, and the mirror will answer.</p>
       )}
     </div>
   );
