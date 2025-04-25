@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const RitualGate = () => {
   const [email, setEmail] = useState("");
   const [refSource, setRefSource] = useState("organic");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -15,20 +16,13 @@ const RitualGate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const timestamp = new Date().toISOString();
 
     try {
       const response = await fetch("/api/airdrop", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          source: refSource,
-          timestamp
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: refSource, timestamp })
       });
 
       if (!response.ok) {
@@ -40,6 +34,15 @@ const RitualGate = () => {
 
       alert("🌀 You’ve entered the waiting.");
       setEmail("");
+
+      setTimeout(() => {
+        // optional: redirect based on source
+        if (refSource === "airdrop") {
+          navigate("/ghost?ref=airdrop");
+        } else {
+          navigate("/rituals");
+        }
+      }, 2000);
     } catch (err) {
       console.error("Unexpected error:", err);
       alert("Something went wrong. Try again.");
