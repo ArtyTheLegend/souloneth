@@ -3,7 +3,6 @@ import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
 });
-
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
@@ -12,15 +11,14 @@ export default async function handler(req, res) {
   }
 
   const { transcript } = req.body;
-
   if (!transcript) {
     return res.status(400).json({ error: "Missing transcript" });
   }
 
   const prompt = `
-You are an emotional intelligence model. Given a user’s spoken reflection, return a set of trait scores from 0 to 1.
+You are an emotional intelligence model. Given a user's spoken reflection, return only a JSON object with trait scores from 0 to 1.
 
-Traits to evaluate:
+Traits:
 - reflective
 - melancholic
 - playful
@@ -29,8 +27,8 @@ Traits to evaluate:
 - curious
 - hopeful
 
-Return ONLY a JSON object like:
-{ "reflective": 0.92, "chaotic": 0.33, ... }
+Example output:
+{ "reflective": 0.91, "chaotic": 0.13 }
 
 Input:
 "${transcript}"
@@ -43,12 +41,17 @@ Input:
       temperature: 0.6
     });
 
-    const jsonBlock = completion.data.choices[0].message.content.trim();
-    const traits = JSON.parse(jsonBlock);
+    const responseText = completion.data.choices[0].message.content.trim();
+    const jsonMatch = responseText.match(/\{[^\}]+\}/gs);
+    const traits = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+
+    if (!traits) {
+      return res.status(500).json({ error: "GPT-4 returned invalid format", raw: responseText });
+    }
 
     return res.status(200).json({ traits });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("OpenAI API Error:", err.message);
     return res.status(500).json({ error: "Trait analysis failed", details: err.message });
   }
 }
