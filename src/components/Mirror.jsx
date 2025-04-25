@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
 
+const getSignal = (value) => {
+  if (value >= 0.75) return "✪ strong";
+  if (value >= 0.45) return "✦ steady";
+  return "✧ faint";
+};
+
 const Mirror = () => {
   const [traits, setTraits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
+  const [traitSummary, setTraitSummary] = useState([]);
 
   useEffect(() => {
     const id = localStorage.getItem("souloneth_user") || "anon_" + Date.now();
@@ -13,7 +20,22 @@ const Mirror = () => {
       .then(res => res.json())
       .then(data => {
         if (data.traits && Array.isArray(data.traits)) {
-          setTraits(data.traits.map(t => t.fields));
+          const records = data.traits.map(t => t.fields);
+          setTraits(records);
+
+          // Group and summarize traits
+          const grouped = {};
+          records.forEach(({ trait, value }) => {
+            if (!grouped[trait]) grouped[trait] = [];
+            grouped[trait].push(parseFloat(value || 0));
+          });
+
+          const summary = Object.entries(grouped).map(([trait, values]) => {
+            const avg = values.reduce((a, b) => a + b, 0) / values.length;
+            return { trait, count: values.length, avg };
+          }).sort((a, b) => b.avg - a.avg);
+
+          setTraitSummary(summary);
         }
         setLoading(false);
       })
@@ -40,21 +62,19 @@ const Mirror = () => {
       </p>
       {loading ? (
         <p>Loading your soulprint...</p>
-      ) : traits.length > 0 ? (
-        <ul style={{ listStyle: "none", padding: 0, maxWidth: "600px" }}>
-          {traits.map((trait, index) => (
-            <li key={index} style={{
+      ) : traitSummary.length > 0 ? (
+        <div style={{ maxWidth: "600px", textAlign: "left" }}>
+          {traitSummary.map(({ trait, avg, count }, i) => (
+            <div key={i} style={{
               marginBottom: "1.5rem",
               borderBottom: "1px solid #333",
               paddingBottom: "1rem"
             }}>
-              <div><strong>Trait:</strong> {trait.trait}</div>
-              <div><strong>Value:</strong> {parseFloat(trait.value || 0).toFixed(2)}</div>
-              <div><strong>Ritual:</strong> {trait.ritual}</div>
-              <div style={{ fontSize: "0.8rem", color: "#777" }}>{trait.timestamp}</div>
-            </li>
+              <div><strong>{trait.charAt(0).toUpperCase() + trait.slice(1)}</strong> ({count} echoes)</div>
+              <div style={{ marginTop: "0.5rem" }}>Signal: {getSignal(avg)}</div>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No reflections recorded yet. Speak, and the mirror will answer.</p>
       )}
