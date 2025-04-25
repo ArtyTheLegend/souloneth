@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://api.airtable.com/v0/app2NkPC5K0JngQtj/Leads", {
+    const response = await fetch("https://api.airtable.com/v0/app2NkPC5K0JngQtj/leads", {
       method: "POST",
       headers: {
         Authorization: "Bearer patHJ9e40Krzpml28.b244f9a9eb29f4e3e6df6c3ee79ba5891f1ea71c06befc1b0fa5e81e72079ad6",
