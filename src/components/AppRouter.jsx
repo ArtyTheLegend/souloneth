@@ -1,43 +1,26 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import RitualGate from "./RitualGate";
-import RitualsPortal from "./RitualsPortal";
-import AirdropPage from "./AirdropPage";
-import Info_Whitepaper from "./Info_Whitepaper";
-import Ritual_GhostMeMeter from "./Ritual_GhostMeMeter";
-import GhostRecord from "./GhostRecord";
-import Ritual_SaveOrSink from "./Ritual_SaveOrSink";
-import Ritual_Ghost from "./Ritual_Ghost";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "../HomePage";
 import ThankYou from "./ThankYou";
-import Mirror from "./Mirror";
-import Oath from "./Oath";
-import Hall from "./Hall";
-import Blessing from "./Blessing";
-import Summon from "./Summon";
-import Vault from "./Vault";
-import Claim from "./Claim";
+import DropDepth from "./DropDepth";
+import BlessingHall from "./BlessingHall";
+import EchoBlessing from "./EchoBlessing";
+import SigilDrop from "./SigilDrop";
+import AccoladeEcho from "./AccoladeEcho";
+import RitualDrop from "./RitualDrop";
+import SoulAccolade from "./SoulAccolade";
 
-const AppRouter = () => (
-  <Router>
+export default function AppRouter() {
+  return (
     <Routes>
-      <Route path="/" element={<RitualGate />} />
-      <Route path="/rituals" element={<RitualsPortal />} />
-      <Route path="/airdrop" element={<AirdropPage />} />
-      <Route path="/whitepaper" element={<Info_Whitepaper />} />
-      <Route path="/ghost" element={<Ritual_Ghost />} />
-      <Route path="/ghost/record" element={<GhostRecord />} />
-      <Route path="/saveorsink" element={<Ritual_SaveOrSink />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/thankyou" element={<ThankYou />} />
-      <Route path="/mirror" element={<Mirror />} />
-      <Route path="/oath" element={<Oath />} />
-      <Route path="/hall" element={<Hall />} />
-      <Route path="/blessing" element={<Blessing />} />
-      <Route path="/summon" element={<Summon />} />
-      <Route path="/vault" element={<Vault />} />
-      <Route path="/claim" element={<Claim />} />
+      <Route path="/dropdepth" element={<DropDepth />} />
+      <Route path="/blessinghall" element={<BlessingHall />} />
+      <Route path="/echoblessing" element={<EchoBlessing />} />
+      <Route path="/sigildrop" element={<SigilDrop />} />
+      <Route path="/accoladeecho" element={<AccoladeEcho />} />
+      <Route path="/ritualdrop" element={<RitualDrop />} />
+      <Route path="/soulaccolade" element={<SoulAccolade />} />
     </Routes>
-  </Router>
-);
-
-export default AppRouter;
+  );
+}
