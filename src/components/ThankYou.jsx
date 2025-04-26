@@ -45,8 +45,14 @@ export default function ThankYou() {
 
       {/* Background Layer */}
       <div
-        className="absolute inset-0 bg-center bg-contain bg-no-repeat opacity-10 animate-breatheveil"
-        style={{ backgroundImage: 'url("/thankyoubackground.png")' }}
+        className="absolute inset-0 opacity-10 animate-breatheveil z-[-1]"
+        style={{
+          backgroundImage: 'url("/thankyoubackground.png")',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
       ></div>
 
       {/* Main Ritual Content */}
@@ -88,7 +94,6 @@ export default function ThankYou() {
             </a>
           </div>
         )}
-
       </div>
 
       {/* Animations */}
