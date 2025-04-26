@@ -30,33 +30,38 @@ export default function ThankYou() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center text-white bg-black">
-      <h1 className="text-4xl font-bold mb-4 tracking-wider">
+      <h1 className="text-4xl font-bold mb-6 tracking-wide">
         Thank You for Crossing the Veil
       </h1>
 
-      <p className="text-lg italic mb-8 text-gray-400">
+      <p className="text-lg italic mb-10 text-gray-400">
         {soulCount === null ? 'Counting the echoes...' : `${soulCount.toLocaleString()} souls heard the call.`}
       </p>
 
-      <div className="my-10">
+      <div className="mb-16">
         <ReturnToRitualButton />
       </div>
 
       {revealLore && (
-        <div className="mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 transition-opacity duration-1000 ease-in opacity-100">
-          <p className="mb-3">You have been marked in the chain of echoes.</p>
-          <p className="mb-3">Your presence now resonates beyond sight.</p>
-          <p className="mb-6">
-            Spread the veil. Summon those who have not yet crossed.
-          </p>
+        <div className="opacity-0 animate-fade-in mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 max-w-xl">
+          <p className="mb-3">You are now etched in the chain of echoes.</p>
+          <p className="mb-3">Your presence reverberates beyond sight.</p>
+          <p className="mb-6">Spread the veil. Let others find their crossing.</p>
           <a
             href="/"
-            className="inline-block px-6 py-2 mt-4 border border-gray-500 rounded hover:bg-gray-800 transition"
+            className="inline-block px-6 py-2 border border-white rounded hover:bg-white hover:text-black transition duration-300"
           >
-            Spread the Veil
+            Spread the Veil →
           </a>
         </div>
       )}
+
+      <style jsx>{`
+        .animate-fade-in {
+          opacity: 1;
+          transition: opacity 1.5s ease-in;
+        }
+      `}</style>
     </div>
   );
 }
