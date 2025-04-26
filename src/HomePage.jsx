@@ -51,7 +51,7 @@ export default function HomePage() {
       <img
         src="/primaryglyph.png"
         alt="Primary Portal Glyph"
-        className="absolute inset-0 m-auto opacity-10 animate-breathe w-3/4 max-w-2xl pointer-events-none select-none z-0"
+        className="absolute inset-0 m-auto opacity-10 animate-breathe w-3/4 max-w-2xl pointer-events-none select-none z-[-1]"
       />
 
       {/* Main Ritual Content */}
@@ -109,6 +109,7 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Animations */}
       <style jsx>{`
         @keyframes breathe {
           0%, 100% { transform: scale(1); opacity: 0.08; }

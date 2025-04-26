@@ -31,11 +31,12 @@ export default function ThankYou() {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-black overflow-hidden">
 
-      {/* Background Glyph Layer */}
+      {/* Preloaded Background Glyph */}
       <img
         src="/thankyoubackground.png"
         alt="Thank You Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil z-0"
+        className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil"
+        style={{ zIndex: -1 }}
       />
 
       {/* Main Ritual Content */}
@@ -67,6 +68,7 @@ export default function ThankYou() {
         )}
       </div>
 
+      {/* Animations */}
       <style jsx>{`
         @keyframes breatheveil {
           0%, 100% { opacity: 0.04; }
