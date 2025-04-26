@@ -45,19 +45,32 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="p-8 text-center">
-      <h1 className="text-4xl font-bold mb-4">Enter the Waiting</h1>
-      <p className="text-lg italic mb-8">Where echoes are born and remembered.</p>
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-8 text-center text-white bg-black overflow-hidden">
+
+      {/* Primary Portal Glyph */}
+      <img
+        src="/primaryglyph.jpeg"
+        alt="Primary Portal Glyph"
+        className="absolute inset-0 m-auto opacity-10 animate-breathe w-3/4 max-w-2xl pointer-events-none select-none"
+      />
+
+      <h1 className="text-4xl font-bold mb-6 tracking-wide z-10">
+        Enter the Waiting
+      </h1>
+
+      <p className="text-lg italic mb-8 text-gray-400 z-10">
+        Where echoes are born and remembered.
+      </p>
 
       <DailyWhisper />
 
       {loading ? (
-        <p className="mt-8">Loading your ghost code...</p>
+        <p className="mt-8 z-10">Loading your ghost code...</p>
       ) : error ? (
-        <p className="text-red-500 italic mt-8">{error}</p>
+        <p className="text-red-500 italic mt-8 z-10">{error}</p>
       ) : (
         <>
-          <div className="mt-8">
+          <div className="mt-8 z-10">
             <h2 className="text-2xl font-semibold">Your Ghost Code</h2>
             <div className="flex items-center justify-center space-x-4 mt-4">
               <div className="px-4 py-2 border rounded bg-black/70 text-white">
@@ -72,7 +85,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-12">
+          <div className="mt-12 z-10">
             <h2 className="text-2xl font-semibold">Your Ritual Link</h2>
             <div className="flex items-center justify-center space-x-4 mt-4">
               <div className="px-4 py-2 border rounded bg-black/70 text-white">
@@ -89,7 +102,21 @@ export default function HomePage() {
         </>
       )}
 
-      <ReturnToRitualButton />
+      <div className="mt-16 z-10">
+        <ReturnToRitualButton />
+      </div>
+
+      {/* Breathing Animation */}
+      <style jsx>{`
+        @keyframes breathe {
+          0%, 100% { transform: scale(1); opacity: 0.08; }
+          50% { transform: scale(1.02); opacity: 0.12; }
+        }
+        .animate-breathe {
+          animation: breathe 8s ease-in-out infinite;
+        }
+      `}</style>
+
     </div>
   );
 }

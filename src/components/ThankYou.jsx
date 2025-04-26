@@ -1,3 +1,5 @@
+// /src/components/ThankYou.jsx
+
 import React, { useEffect, useState } from 'react';
 import supabase from '@/utils/supabase';
 import ReturnToRitualButton from '@/components/ReturnToRitualButton';
@@ -29,21 +31,29 @@ export default function ThankYou() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center text-white bg-black">
-      <h1 className="text-4xl font-bold mb-6 tracking-wide">
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-8 text-center text-white bg-black overflow-hidden">
+
+      {/* ThankYou Background */}
+      <img
+        src="/thankyoubackground.jpeg"
+        alt="Thank You Background"
+        className="absolute inset-0 m-auto opacity-5 w-full h-full object-cover pointer-events-none select-none animate-fadeveil"
+      />
+
+      <h1 className="text-4xl font-bold mb-6 tracking-wide z-10">
         Thank You for Crossing the Veil
       </h1>
 
-      <p className="text-lg italic mb-10 text-gray-400">
+      <p className="text-lg italic mb-10 text-gray-400 z-10">
         {soulCount === null ? 'Counting the echoes...' : `${soulCount.toLocaleString()} souls heard the call.`}
       </p>
 
-      <div className="mb-16">
+      <div className="mb-16 z-10">
         <ReturnToRitualButton />
       </div>
 
       {revealLore && (
-        <div className="opacity-0 animate-fade-in mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 max-w-xl">
+        <div className="opacity-0 animate-fade-in mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 max-w-xl z-10">
           <p className="mb-3">You are now etched in the chain of echoes.</p>
           <p className="mb-3">Your presence reverberates beyond sight.</p>
           <p className="mb-6">Spread the veil. Let others find their crossing.</p>
@@ -56,12 +66,23 @@ export default function ThankYou() {
         </div>
       )}
 
+      {/* Breathing Animations */}
       <style jsx>{`
+        @keyframes breatheveil {
+          0%, 100% { opacity: 0.04; }
+          50% { opacity: 0.08; }
+        }
+        .animate-fadeveil {
+          animation: breatheveil 10s ease-in-out infinite;
+        }
+        @keyframes fadeIn {
+          to { opacity: 1; }
+        }
         .animate-fade-in {
-          opacity: 1;
-          transition: opacity 1.5s ease-in;
+          animation: fadeIn 2s ease forwards;
         }
       `}</style>
+
     </div>
   );
 }
