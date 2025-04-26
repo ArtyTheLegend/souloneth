@@ -32,7 +32,10 @@ export default function ThankYou() {
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden text-center text-white">
 
       {/* Background Layer */}
-      <div className="absolute inset-0 bg-center bg-cover opacity-5 animate-breatheveil" style={{ backgroundImage: 'url("/thankyoubackground.png")' }}></div>
+      <div
+        className="absolute inset-0 bg-center bg-contain bg-no-repeat opacity-10 animate-breatheveil"
+        style={{ backgroundImage: 'url("/thankyoubackground.png")' }}
+      ></div>
 
       {/* Main Ritual Content */}
       <div className="relative z-10 flex flex-col items-center p-8">
@@ -63,10 +66,11 @@ export default function ThankYou() {
         )}
       </div>
 
+      {/* Animations */}
       <style jsx>{`
         @keyframes breatheveil {
-          0%, 100% { opacity: 0.04; }
-          50% { opacity: 0.08; }
+          0%, 100% { opacity: 0.10; }
+          50% { opacity: 0.20; }
         }
         .animate-breatheveil {
           animation: breatheveil 10s ease-in-out infinite;
