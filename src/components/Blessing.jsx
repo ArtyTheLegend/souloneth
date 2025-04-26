@@ -1,33 +1,18 @@
-import React from "react";
+import React from 'react';
+import TraitReveal from '@/components/TraitReveal';
+import ReturnToRitualButton from '@/components/ReturnToRitualButton';
 
-const blessing = {
-  reflective: "🪞 You are seen deeply, and your stillness holds power.",
-  playful: "🎭 Joy is its own ritual. Keep it strange.",
-  melancholic: "🌫️ What you've carried was not yours alone.",
-  chaotic: "🔥 The path ahead is unwritten. Burn clean.",
-  default: "💀 You were heard. Even silence echoes here."
-};
-
-const Blessing = () => {
-  const trait = localStorage.getItem("souloneth_last_trait") || "default";
-  const message = blessing[trait] || blessing["default"];
+export default function BlessingPage() {
+  const userTraits = ['Brave', 'Reflective', 'Mischievous']; // Replace with real pulled traits if available
 
   return (
-    <div style={{
-      backgroundColor: "#0e0e10",
-      color: "#f5f5f5",
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      textAlign: "center",
-      padding: "2rem"
-    }}>
-      <h1>🔮 Your Blessing</h1>
-      <p>{message}</p>
+    <div className="p-6 text-center">
+      <h1 className="text-3xl font-bold">You Were Heard</h1>
+      <p className="italic mt-2">Even silence echoes here.</p>
+
+      <TraitReveal traits={userTraits} />
+
+      <ReturnToRitualButton />
     </div>
   );
-};
-
-export default Blessing;
+}
