@@ -49,7 +49,7 @@ export default function HomePage() {
 
       {/* Primary Portal Glyph */}
       <img
-        src="/primaryglyph.jpeg"
+        src="/primaryglyph.png"
         alt="Primary Portal Glyph"
         className="absolute inset-0 m-auto opacity-10 animate-breathe w-3/4 max-w-2xl pointer-events-none select-none"
       />

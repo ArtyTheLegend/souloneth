@@ -35,7 +35,7 @@ export default function ThankYou() {
 
       {/* ThankYou Background */}
       <img
-        src="/thankyoubackground.jpeg"
+        src="/thankyoubackground.png"
         alt="Thank You Background"
         className="absolute inset-0 m-auto opacity-5 w-full h-full object-cover pointer-events-none select-none animate-fadeveil"
       />
