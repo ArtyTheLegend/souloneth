@@ -5,6 +5,7 @@ import ReturnToRitualButton from '@/components/ReturnToRitualButton';
 export default function ThankYou() {
   const [soulCount, setSoulCount] = useState(null);
   const [revealLore, setRevealLore] = useState(false);
+  const [glyphLoaded, setGlyphLoaded] = useState(false);
 
   useEffect(() => {
     const fetchSoulCount = async () => {
@@ -28,16 +29,27 @@ export default function ThankYou() {
     return () => clearTimeout(loreTimeout);
   }, []);
 
+  // Preload the glyph image
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/thankyoubackground.png';
+    img.onload = () => {
+      setGlyphLoaded(true);
+    };
+  }, []);
+
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-black overflow-hidden">
 
-      {/* Preloaded Background Glyph */}
-      <img
-        src="/thankyoubackground.png"
-        alt="Thank You Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil"
-        style={{ zIndex: -1 }}
-      />
+      {/* Background Glyph - Only show after it's fully loaded */}
+      {glyphLoaded && (
+        <img
+          src="/thankyoubackground.png"
+          alt="Thank You Background"
+          className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil"
+          style={{ zIndex: -1 }}
+        />
+      )}
 
       {/* Main Ritual Content */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center text-white p-8">
@@ -68,7 +80,6 @@ export default function ThankYou() {
         )}
       </div>
 
-      {/* Animations */}
       <style jsx>{`
         @keyframes breatheveil {
           0%, 100% { opacity: 0.04; }
