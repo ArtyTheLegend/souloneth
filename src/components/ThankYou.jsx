@@ -5,7 +5,6 @@ import ReturnToRitualButton from '@/components/ReturnToRitualButton';
 export default function ThankYou() {
   const [soulCount, setSoulCount] = useState(null);
   const [revealLore, setRevealLore] = useState(false);
-  const [glyphLoaded, setGlyphLoaded] = useState(false);
 
   useEffect(() => {
     const fetchSoulCount = async () => {
@@ -29,30 +28,18 @@ export default function ThankYou() {
     return () => clearTimeout(loreTimeout);
   }, []);
 
-  // Preload the glyph image
-  useEffect(() => {
-    const img = new Image();
-    img.src = '/thankyoubackground.png';
-    img.onload = () => {
-      setGlyphLoaded(true);
-    };
-  }, []);
-
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-black overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden p-8 text-center text-white">
 
-      {/* Background Glyph - Only show after it's fully loaded */}
-      {glyphLoaded && (
-        <img
-          src="/thankyoubackground.png"
-          alt="Thank You Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil"
-          style={{ zIndex: -1 }}
-        />
-      )}
+      {/* Background Mist Glyph */}
+      <img
+        src="/thankyoubackground.png"
+        alt="Thank You Background"
+        className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil z-[-1]"
+      />
 
       {/* Main Ritual Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center text-white p-8">
+      <div className="relative z-10 flex flex-col items-center">
         <h1 className="text-4xl font-bold mb-6 tracking-wide">
           Thank You for Crossing the Veil
         </h1>

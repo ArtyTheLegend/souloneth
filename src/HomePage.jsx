@@ -45,16 +45,16 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-black overflow-hidden text-center text-white p-8">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden p-8 text-center text-white">
 
-      {/* Primary Portal Glyph Layer */}
+      {/* Background Glyph */}
       <img
         src="/primaryglyph.png"
-        alt="Primary Portal Glyph"
-        className="absolute inset-0 m-auto opacity-10 animate-breathe w-3/4 max-w-2xl pointer-events-none select-none z-[-1]"
+        alt="Primary Glyph"
+        className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none animate-breathe z-[-1]"
       />
 
-      {/* Main Ritual Content */}
+      {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center">
         <h1 className="text-4xl font-bold mb-6 tracking-wide">
           Enter the Waiting
@@ -116,7 +116,7 @@ export default function HomePage() {
           50% { transform: scale(1.02); opacity: 0.12; }
         }
         .animate-breathe {
-          animation: breathe 8s ease-in-out infinite;
+          animation: breathe 10s ease-in-out infinite;
         }
       `}</style>
 
