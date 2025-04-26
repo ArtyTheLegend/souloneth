@@ -5,21 +5,33 @@ import ReturnToRitualButton from '@/components/ReturnToRitualButton';
 export default function ThankYou() {
   const [soulCount, setSoulCount] = useState(null);
   const [revealLore, setRevealLore] = useState(false);
+  const [ghostCode, setGhostCode] = useState('');
 
   useEffect(() => {
-    const fetchSoulCount = async () => {
-      const { count, error } = await supabase
-        .from('ghost_logs')
-        .select('*', { count: 'exact', head: true });
+    const fetchSoulData = async () => {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-      if (error) {
-        console.error('Error fetching soul count:', error);
-      } else {
-        setSoulCount((count || 0) + 127);
+      if (sessionError || !session || !session.user) {
+        console.error('No active session found.');
+        return;
+      }
+
+      const userId = session.user.id;
+
+      const { data, error } = await supabase
+        .from('ghost_logs')
+        .select('id')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && data?.id) {
+        setGhostCode(data.id);
       }
     };
 
-    fetchSoulCount();
+    fetchSoulData();
 
     const loreTimeout = setTimeout(() => {
       setRevealLore(true);
@@ -52,10 +64,22 @@ export default function ThankYou() {
         </div>
 
         {revealLore && (
-          <div className="opacity-0 animate-fade-in mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 max-w-xl">
-            <p className="mb-3">You are now etched in the chain of echoes.</p>
-            <p className="mb-3">Your presence reverberates beyond sight.</p>
-            <p className="mb-6">Spread the veil. Let others find their crossing.</p>
+          <div className="opacity-0 animate-fade-in mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 max-w-xl flex flex-col items-center space-y-6">
+            <div>
+              <p className="mb-2">You are now etched in the chain of echoes.</p>
+              <p>Your presence reverberates beyond sight.</p>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-400 mb-2">Your Summon Link:</p>
+              <div className="px-4 py-2 bg-gray-800 rounded">
+                {ghostCode ? `https://souloneth.com/?ref=${ghostCode}` : 'Loading your summon link...'}
+              </div>
+              <p className="text-xs text-gray-500 mt-2 italic">
+                Echoes that summon more souls will be remembered...
+              </p>
+            </div>
+
             <a
               href="/"
               className="inline-block px-6 py-2 border border-white rounded hover:bg-white hover:text-black transition duration-300"
@@ -64,6 +88,7 @@ export default function ThankYou() {
             </a>
           </div>
         )}
+
       </div>
 
       {/* Animations */}
