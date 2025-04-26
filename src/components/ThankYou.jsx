@@ -1,61 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import supabase from '@/utils/supabase';
+import ReturnToRitualButton from '@/components/ReturnToRitualButton';
 
-const ThankYou = () => {
-  const [counter, setCounter] = useState(4132);
-  const [showNext, setShowNext] = useState(false);
-  const [refLink, setRefLink] = useState("");
+export default function ThankYou() {
+  const [soulCount, setSoulCount] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowNext(true), 3000);
-    const id = localStorage.getItem("souloneth_user") || "anon";
-    setRefLink(`https://souloneth.com/?ref=${id}`);
-    return () => clearTimeout(timer);
+    const fetchSoulCount = async () => {
+      const { count, error } = await supabase
+        .from('ghost_logs')
+        .select('*', { count: 'exact', head: true });
+
+      if (error) {
+        console.error('Error fetching soul count:', error);
+      } else {
+        setSoulCount(count);
+      }
+    };
+
+    fetchSoulCount();
   }, []);
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      backgroundColor: "#0e0e10",
-      color: "#f5f5f5",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      padding: "2rem"
-    }}>
-      <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🌀 You’ve Been Marked</h1>
-      <p style={{ fontSize: "1.1rem", marginBottom: "2rem", maxWidth: "500px" }}>
-        The ritual remembers you.<br />Your presence is now encoded in the waiting.
+    <div className="p-8 text-center">
+      <h1 className="text-4xl font-bold mb-6">Thank You for Entering the Veil</h1>
+      
+      <p className="text-lg italic mb-8">
+        {soulCount ? `${soulCount.toLocaleString()} souls have already entered.` : 'Loading soul count...'}
       </p>
-      <p style={{ fontSize: "0.9rem", color: "#888" }}>
-        {counter.toLocaleString()} souls have already entered.
-      </p>
-      <div style={{ marginTop: "3rem", fontSize: "0.85rem", color: "#777", maxWidth: "90%", wordWrap: "break-word" }}>
-        Share your ghost code: <br />
-        <code style={{
-          backgroundColor: "#111",
-          padding: "0.3rem 0.6rem",
-          borderRadius: "4px",
-          display: "inline-block"
-        }}>
-          {refLink}
-        </code>
-      </div>
-      <div style={{ marginTop: "4rem", color: "#666", fontStyle: "italic" }}>
-        “The veil is thinner now. Watch what answers.”
-      </div>
-      {showNext && (
-        <div style={{ marginTop: "3rem", fontSize: "1rem" }}>
-          <p>✨ The ritual continues.</p>
-          <p><Link to="/ghost" style={{ color: "#f5f5f5" }}>→ Begin your reflection</Link></p>
-          <p><Link to="/mirror" style={{ color: "#f5f5f5" }}>→ View your imprint</Link></p>
-          <p><Link to="/summon" style={{ color: "#f5f5f5" }}>→ Spread the veil</Link></p>
-        </div>
-      )}
+
+      <ReturnToRitualButton />
     </div>
   );
-};
-
-export default ThankYou;
+}
