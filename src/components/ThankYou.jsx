@@ -29,17 +29,20 @@ export default function ThankYou() {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden p-8 text-center text-white">
+    <div className="relative min-h-screen overflow-hidden bg-black">
 
-      {/* Background Mist Glyph */}
-      <img
-        src="/thankyoubackground.png"
-        alt="Thank You Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil z-[-1]"
-      />
+      {/* Background Layer */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/thankyoubackground.png"
+          alt="Thank You Background"
+          className="w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil"
+        />
+      </div>
 
-      {/* Main Ritual Content */}
-      <div className="relative z-10 flex flex-col items-center">
+      {/* Foreground Ritual Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center text-white p-8">
+
         <h1 className="text-4xl font-bold mb-6 tracking-wide">
           Thank You for Crossing the Veil
         </h1>
@@ -65,6 +68,7 @@ export default function ThankYou() {
             </a>
           </div>
         )}
+
       </div>
 
       <style jsx>{`
