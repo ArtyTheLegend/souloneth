@@ -29,19 +29,17 @@ export default function ThankYou() {
   }, []);
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen p-8 text-center text-white bg-black overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-black overflow-hidden">
 
-      {/* ThankYou Background */}
+      {/* Background Glyph Layer */}
       <img
         src="/thankyoubackground.png"
         alt="Thank You Background"
-        className="absolute inset-0 m-auto opacity-5 w-full h-full object-cover pointer-events-none select-none animate-fadeveil"
-        style={{ zIndex: 0 }}
+        className="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none select-none animate-breatheveil z-0"
       />
 
-      {/* Main Text */}
-      <div className="relative z-10 flex flex-col items-center">
-
+      {/* Main Ritual Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center text-white p-8">
         <h1 className="text-4xl font-bold mb-6 tracking-wide">
           Thank You for Crossing the Veil
         </h1>
@@ -67,16 +65,14 @@ export default function ThankYou() {
             </a>
           </div>
         )}
-
       </div>
 
-      {/* Breathing Animations */}
       <style jsx>{`
         @keyframes breatheveil {
           0%, 100% { opacity: 0.04; }
           50% { opacity: 0.08; }
         }
-        .animate-fadeveil {
+        .animate-breatheveil {
           animation: breatheveil 10s ease-in-out infinite;
         }
         @keyframes fadeIn {
