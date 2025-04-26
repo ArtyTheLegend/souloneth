@@ -45,17 +45,13 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden p-8 text-center text-white">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden text-center text-white">
 
-      {/* Background Glyph */}
-      <img
-        src="/primaryglyph.png"
-        alt="Primary Glyph"
-        className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none animate-breathe z-[-1]"
-      />
+      {/* Background Layer */}
+      <div className="absolute inset-0 bg-center bg-contain bg-no-repeat opacity-10 animate-breathe" style={{ backgroundImage: 'url("/primaryglyph.png")' }}></div>
 
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center">
+      {/* Main Ritual Content */}
+      <div className="relative z-10 flex flex-col items-center p-8">
         <h1 className="text-4xl font-bold mb-6 tracking-wide">
           Enter the Waiting
         </h1>
@@ -109,11 +105,11 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Animations */}
+      {/* Breathing Animation */}
       <style jsx>{`
         @keyframes breathe {
-          0%, 100% { transform: scale(1); opacity: 0.08; }
-          50% { transform: scale(1.02); opacity: 0.12; }
+          0%, 100% { opacity: 0.08; }
+          50% { opacity: 0.12; }
         }
         .animate-breathe {
           animation: breathe 10s ease-in-out infinite;
