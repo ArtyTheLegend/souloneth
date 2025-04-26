@@ -1,119 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import DailyWhisper from '@/components/DailyWhisper';
-import ReturnToRitualButton from '@/components/ReturnToRitualButton';
-import { copyToClipboard } from '@/utils/copyClipboard';
 import supabase from '@/utils/supabase';
+import ReturnToRitualButton from '@/components/ReturnToRitualButton';
 
-export default function HomePage() {
-  const [ghostCode, setGhostCode] = useState('');
-  const [ritualLink, setRitualLink] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+export default function ThankYou() {
+  const [soulCount, setSoulCount] = useState(null);
+  const [revealLore, setRevealLore] = useState(false);
 
   useEffect(() => {
-    const fetchGhostId = async () => {
-      setLoading(true);
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-      if (sessionError || !session || !session.user) {
-        setError('No active session found.');
-        setLoading(false);
-        return;
-      }
-
-      const userId = session.user.id;
-
-      const { data, error } = await supabase
+    const fetchSoulCount = async () => {
+      const { count, error } = await supabase
         .from('ghost_logs')
-        .select('id')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        .select('*', { count: 'exact', head: true });
 
-      if (error || !data?.id) {
-        setError('No Ghost Code Found — Please record your ritual first.');
+      if (error) {
+        console.error('Error fetching soul count:', error);
       } else {
-        setGhostCode(data.id);
-        setRitualLink(`https://souloneth.com/ritual?id=${data.id}`);
+        setSoulCount((count || 0) + 127);
       }
-
-      setLoading(false);
     };
 
-    fetchGhostId();
+    fetchSoulCount();
+
+    const loreTimeout = setTimeout(() => {
+      setRevealLore(true);
+    }, 3000);
+
+    return () => clearTimeout(loreTimeout);
   }, []);
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen p-8 text-center text-white bg-black overflow-hidden">
 
-      {/* Primary Portal Glyph */}
+      {/* ThankYou Background */}
       <img
-        src="/primaryglyph.png"
-        alt="Primary Portal Glyph"
-        className="absolute inset-0 m-auto opacity-10 animate-breathe w-3/4 max-w-2xl pointer-events-none select-none"
+        src="/thankyoubackground.png"
+        alt="Thank You Background"
+        className="absolute inset-0 m-auto opacity-5 w-full h-full object-cover pointer-events-none select-none animate-fadeveil"
+        style={{ zIndex: 0 }}
       />
 
-      <h1 className="text-4xl font-bold mb-6 tracking-wide z-10">
-        Enter the Waiting
-      </h1>
+      {/* Main Text and Content */}
+      <div className="relative z-10 flex flex-col items-center">
 
-      <p className="text-lg italic mb-8 text-gray-400 z-10">
-        Where echoes are born and remembered.
-      </p>
+        <h1 className="text-4xl font-bold mb-6 tracking-wide">
+          Thank You for Crossing the Veil
+        </h1>
 
-      <DailyWhisper />
+        <p className="text-lg italic mb-10 text-gray-400">
+          {soulCount === null ? 'Counting the echoes...' : `${soulCount.toLocaleString()} souls heard the call.`}
+        </p>
 
-      {loading ? (
-        <p className="mt-8 z-10">Loading your ghost code...</p>
-      ) : error ? (
-        <p className="text-red-500 italic mt-8 z-10">{error}</p>
-      ) : (
-        <>
-          <div className="mt-8 z-10">
-            <h2 className="text-2xl font-semibold">Your Ghost Code</h2>
-            <div className="flex items-center justify-center space-x-4 mt-4">
-              <div className="px-4 py-2 border rounded bg-black/70 text-white">
-                {ghostCode}
-              </div>
-              <button
-                onClick={() => copyToClipboard(ghostCode)}
-                className="px-4 py-2 rounded bg-gray-800 text-white hover:bg-gray-600"
-              >
-                Copy Code
-              </button>
-            </div>
+        <div className="mb-16">
+          <ReturnToRitualButton />
+        </div>
+
+        {revealLore && (
+          <div className="opacity-0 animate-fade-in mt-12 border-t border-gray-700 pt-8 text-sm text-gray-400 max-w-xl">
+            <p className="mb-3">You are now etched in the chain of echoes.</p>
+            <p className="mb-3">Your presence reverberates beyond sight.</p>
+            <p className="mb-6">Spread the veil. Let others find their crossing.</p>
+            <a
+              href="/"
+              className="inline-block px-6 py-2 border border-white rounded hover:bg-white hover:text-black transition duration-300"
+            >
+              Spread the Veil →
+            </a>
           </div>
+        )}
 
-          <div className="mt-12 z-10">
-            <h2 className="text-2xl font-semibold">Your Ritual Link</h2>
-            <div className="flex items-center justify-center space-x-4 mt-4">
-              <div className="px-4 py-2 border rounded bg-black/70 text-white">
-                {ritualLink}
-              </div>
-              <button
-                onClick={() => copyToClipboard(ritualLink)}
-                className="px-4 py-2 rounded bg-gray-800 text-white hover:bg-gray-600"
-              >
-                Copy Link
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
-      <div className="mt-16 z-10">
-        <ReturnToRitualButton />
       </div>
 
-      {/* Breathing Animation */}
+      {/* Breathing Animations */}
       <style jsx>{`
-        @keyframes breathe {
-          0%, 100% { transform: scale(1); opacity: 0.08; }
-          50% { transform: scale(1.02); opacity: 0.12; }
+        @keyframes breatheveil {
+          0%, 100% { opacity: 0.04; }
+          50% { opacity: 0.08; }
         }
-        .animate-breathe {
-          animation: breathe 8s ease-in-out infinite;
+        .animate-fadeveil {
+          animation: breatheveil 10s ease-in-out infinite;
+        }
+        @keyframes fadeIn {
+          to { opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fadeIn 2s ease forwards;
         }
       `}</style>
 
